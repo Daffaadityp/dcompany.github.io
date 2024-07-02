@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Encryption</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .output {
+            margin-top: 20px;
+        }
+        .pin {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Text Encryption</h1>
+        <textarea id="inputText" rows="4" placeholder="Input text"></textarea>
+        <button onclick="encryptText()">Encrypt</button>
+        <div class="output">
+            <h3>Output:</h3>
+            <textarea id="outputText" rows="4" readonly></textarea>
+            <p class="pin">Pin: <span id="pin"></span></p>
+        </div>
+    </div>
+<button onclick="copyToClipboard()">Copy</button>
+
+    <script>
+        const encryptionMap = {
+            'a': '™£™€™£#dGw[×\'uüJm&­)úäT±ÒûÖ.¥uåêV=ìtü4}xU¤læk­®þ',
+            'b': '€~£~¥~£>]>#xU¤læk­',
+            'c': '+2£™¥™£#dGwcYwdcYwddGwúäT±ÒûÖ',
+            'd': '@#&((>¦|dGwcYwduüJm&­)úäT',
+            'e': '[}£~¥™£#cYwdxU¤læk­úäT±ÒûÖ',
+            'f': '£€£™¥™#cYwdúäT±ÒûÖuüJm&­)úäT',
+            'g': '¬¦~£™¥#cYwddGwcYwddGwcYwddGw',
+            'h': ') (;|`¬¥#uüJm&­)úäTuüJm&­)úäT',
+            'i': '*"/$;`#«iáNº·VV³­%µ+²+ÁÝöOʈµ%jAºM¨b2¬5áò¸~tMÍúì>\'>»}%!"ÙPՈÊR¯\'HDL-Ẹ̀Ə($îå±*eèÓÑ{_¾¥`',
+            'j': '=>#+) $ÙPՈÊR¯\'HDL-',
+            'k': '[™¯‰#@M¨b2¬5áò',
+            'l': '@##₩¢&ÙPՈÊR¯\'HDL-',
+            'm': '_+¢%#M¨b2¬5áòÙPՈÊR¯\'HDL-',
+            'n': '≠≈‰%%%#ÙPՈÊR¯\'HDL-uüJm&­)úäT',
+            'o': '🗿;÷#÷úäT±ÒûÖuüJm&­)úäT',
+            'p': '\\©™#®🗿ÙPՈÊR¯\'HDL-',
+            'q': '™€~¥>[>>;>[>] >>[™€🗿iqnIwnxma/uwjeb#',
+            'r': '®️©️⛏️🎢££€€¥¥¢¢©©®®#M¨b2¬5áòM¨b2¬5áò',
+            's': '¿¿~™, 🔚🛅👘🎎🏘️🏚️💒😀#ÙPՈÊR¯\'HDL-',
+            't': '👘🏚️🛅🏘️®️#¹²cêPÿ�ÎZÕP_ö®åýrÿ�µZ',
+            'u': '🙄❤️😔😱🙄🎇#M¨b2¬5áò',
+            'v': '🔥🔥🐢😂#😄cêPÿ�ÎZÕP_ö®åýrÿ�µZ😭hwjfhqi-WiebqIUwuaWQIDBbwbdh👍💀🎎quwudggxvajwk#🗽🎢',
+            'w': '🔥[>{<$£~{#|[||¦¦[^~cêPÿ�ÎZÕP_ö®åýrÿ�µZ',
+            'x': '£~¦]¦€¦>€¦>#]]]cêPÿ�ÎZÕP_ö®åýrÿ�µZ',
+            'y': '$#)$)@))$)™£<]|¦£¦[¦[¦[¦>^~¿¿§_109§',
+            'z': '§§[™;#M¨b2¬5áòcêPÿ�ÎZÕP_ö®åýrÿ�µZ|[>>£~>]>€™~²⅔8cêPÿ�ÎZÕP_ö®åýrÿ�µZ',
+            '0': '& $(@=#,تستستس٧٧',
+            '1': '#دخبنM¨b2¬5áò',
+            '2': 'رط#رطM¨b2¬5áò',
+            '3': '؟¿<€<؛# <<€®cêPÿ�ÎZÕP_ö®åýrÿ�µZ',
+            '4': '؟¿<#€<¿¿<<€®M¨b2¬5áò',
+            '5': 'ㅃ@ㅇ닙ㄷ쟈ㅑ#gتسM¨b2¬5áò',
+            '6': '♥#$ا-(2=$)وتشس"ㅗㅁ☆cêPÿ�ÎZÕP_ö®åýrÿ�µZ',
+            '7': '♥#$ا-(2=$)وتكسㅗㅁ☆cêPÿ�ÎZÕP_ö®åýrÿ�µZ',
+            '8': '♥#$ا-(2=$)وشسㅗㅁ☆ÙPՈÊR¯\'HDL-',
+            '9': '♥#$ا-(2=$)وتاسㅗㅁ☆uüJm&­)úäT',
+            '10': '♥#$ا-(2=$)وتزسㅗㅁ☆M¨b2¬5áò',
+            ' ': ' ¡¿#¡¿ÙPՈÊR¯\'HDL-ÙPՈÊR¯\'HDL-'
+            ',': '888'
+            '.': 'dyxSga'
+            '-': 'sas'
+        };
+
+        function encryptText() {
+            const inputText = document.getElementById('inputText').value.toLowerCase();
+            let encryptedText = '';
+            let pinCount = 0;
+
+            for (let char of inputText) {
+                if (encryptionMap[char]) {
+                    encryptedText += encryptionMap[char] + '\n';
+                    pinCount += (encryptionMap[char].match(/#/g) || []).length;
+                }
+            }
+
+            document.getElementById('outputText').value = encryptedText.trim();
+            document.getElementById('pin').innerText = pinCount;
+        }
+        function copyToClipboard() {
+    var copyText = document.getElementById("outputText");
+    copyText.select();
+    copyText.setSelectionRange(0, 1); // Untuk perangkat seluler
+
+    navigator.clipboard.writeText(copyText.value).then(() => {
+        alert("Copied to clipboard!");
+    }).catch(err => {
+        alert('Failed to copy: ', err);
+    });
+}
+    </script>
+</body>
+</html>

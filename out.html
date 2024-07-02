@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decryption Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        textarea, input, button {
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+        }
+        button {
+            cursor: pointer;
+        }
+        #pinError {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Decryption Page</h1>
+    <textarea id="encryptedText" rows="10" cols="50" placeholder="Input encrypted text"></textarea><br>
+    <input type="number" id="pin" placeholder="Enter pin"><br>
+    <button onclick="decryptText()">Decrypt</button>
+    <p id="pinError">Null.... Error!</p>
+    <textarea id="outputText" rows="10" cols="50" readonly placeholder="Output"></textarea>
+
+    <script>
+        const decryptionMap = {
+            '™£™€™£#dGw[×\'uüJm&­)úäT±ÒûÖ.¥uåêV=ìtü4}xU¤læk­®þ': 'a',
+            '€~£~¥~£>]>#xU¤læk­': 'b',
+            '+2£™¥™£#dGwcYwdcYwddGwúäT±ÒûÖ': 'c',
+            '@#&((>¦|dGwcYwduüJm&­)úäT': 'd',
+            '[}£~¥™£#cYwdxU¤læk­úäT±ÒûÖ': 'e',
+            '£€£™¥™#cYwdúäT±ÒûÖuüJm&­)úäT': 'f',
+            '¬¦~£™¥#cYwddGwcYwddGwcYwddGw': 'g',
+            ') (;|`¬¥#uüJm&­)úäTuüJm&­)úäT': 'h',
+            '*"/$;`#«iáNº·VV³­%µ+²+ÁÝöOʈµ%jAºM¨b2¬5áò¸~tMÍúì>\'>»}%!"ÙPՈÊR¯\'HDL-Ẹ̀Ə($îå±*eèÓÑ{_¾¥`': 'i',
+            '=>#+) $ÙPՈÊR¯\'HDL-': 'j',
+            '[™¯‰#@M¨b2¬5áò': 'k',
+            '@##₩¢&ÙPՈÊR¯\'HDL-': 'l',
+            '_+¢%#M¨b2¬5áòÙPՈÊR¯\'HDL-': 'm',
+            '≠≈‰%%%#ÙPՈÊR¯\'HDL-uüJm&­)úäT': 'n',
+            '🗿;÷#÷úäT±ÒûÖuüJm&­)úäT': 'o',
+            '\\©™#®🗿ÙPՈÊR¯\'HDL-': 'p',
+            '™€~¥>[>>;>[>] >>[™€🗿iqnIwnxma/uwjeb#': 'q',
+            '®️©️⛏️🎢££€€¥¥¢¢©©®®#M¨b2¬5áòM¨b2¬5áò': 'r',
+            '¿¿~™, 🔚🛅👘🎎🏘️🏚️💒😀#ÙPՈÊR¯\'HDL-': 's',
+            '👘🏚️🛅🏘️®️#¹²cêPÿ�ÎZÕP_ö®åýrÿ�µZ': 't',
+            '🙄❤️😔😱🙄🎇#M¨b2¬5áò': 'u',
+            '🔥🔥🐢😂#😄cêPÿ�ÎZÕP_ö®åýrÿ�µZ😭hwjfhqi-WiebqIUwuaWQIDBbwbdh👍💀🎎quwudggxvajwk#🗽🎢': 'v',
+            '🔥[>{<$£~{#|[||¦¦[^~cêPÿ�ÎZÕP_ö®åýrÿ�µZ': 'w',
+            '£~¦]¦€¦>€¦>#]]]cêPÿ�ÎZÕP_ö®åýrÿ�µZ': 'x',
+            '$#)$)@))$)™£<]|¦£¦[¦[¦[¦>^~¿¿§_109§': 'y',
+            '§§[™;#M¨b2¬5áòcêPÿ�ÎZÕP_ö®åýrÿ�µZ|[>>£~>]>€™~²⅔8cêPÿ�ÎZÕP_ö®åýrÿ�µZ': 'z',
+            '& $(@=#,تستستس ٧٧': '0',
+            '#دخبنM¨b2¬5áò': '1',
+            'رط#رطM¨b2¬5áò': '2',
+            '؟¿<€<؛# <<€®cêPÿ�ÎZÕP_ö®åýrÿ�µZ': '3',
+            '؟¿<#€<¿¿<<€®M¨b2¬5áò': '4',
+            'ㅃ@ㅇ닙ㄷ쟈ㅑ#gتسM¨b2¬5áò': '5',
+            '♥#$ا-(2=$)وتشس"ㅗㅁ☆cêPÿ�ÎZÕP_ö®åýrÿ�µZ': '6',
+            '♥#$ا-(2=$)وتكسㅗㅁ☆cêPÿ�ÎZÕP_ö®åýrÿ�µZ': '7',
+            '♥#$ا-(2=$)وشسㅗㅁ☆ÙPՈÊR¯\'HDL-': '8',
+            '♥#$ا-(2=$)وتاسㅗㅁ☆uüJm&­)úäT': '9',
+            '♥#$ا-(2=$)وتزسㅗㅁ☆M¨b2¬5áò': '10',
+            ' ¡¿#¡¿ÙPՈÊR¯\'HDL-ÙPՈÊR¯\'HDL-': ' ',
+            '888': ',',
+            'dyxSga': '.'
+            'sas': '-'
+        };
+
+        function decryptText() {
+            const encryptedText = document.getElementById('encryptedText').value.trim();
+            const pin = parseInt(document.getElementById('pin').value);
+            let decryptedText = '';
+            let totalHashes = 0;
+
+            const encryptedSegments = encryptedText.split('\n');
+            encryptedSegments.forEach(segment => {
+                totalHashes += (segment.match(/#/g) || []).length;
+                if (decryptionMap[segment]) {
+                    decryptedText += decryptionMap[segment];
+                }
+            });
+
+            if (totalHashes !== pin) {
+                document.getElementById('pinError').style.display = 'block';
+                document.getElementById('outputText').value = '';
+            } else {
+                document.getElementById('pinError').style.display = 'none';
+                document.getElementById('outputText').value = decryptedText;
+            }
+        }
+    </script>
+</body>
+</html>
